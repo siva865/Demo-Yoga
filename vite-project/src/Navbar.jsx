@@ -11,13 +11,8 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 10);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -33,14 +28,17 @@ const Navbar = () => {
 
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <div className="flex items-center">
+      <div className="w-full max-w-screen-xl mx-auto px-4 flex justify-between items-center overflow-x-hidden">
+        {/* Logo/Title - Hidden on mobile, hover effect on desktop */}
+        <a href="#" className="flex items-center group">
           <GrYoga className="text-3xl text-primary mr-2" />
-          <h1 className="text-2xl font-bold text-primary">Vedic Yog Kendra</h1>
-        </div>
+          <h1 className="text-2xl font-bold text-primary group-hover:text-white transition-colors hidden sm:block">
+            Vedic Yog Kendra
+          </h1>
+        </a>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-8">
+        <nav className="hidden md:flex space-x-6">
           {navItems.map((item) => (
             <a
               key={item.name}
@@ -64,49 +62,46 @@ const Navbar = () => {
         {/* Mobile Sidebar */}
         <AnimatePresence>
           {isOpen && (
-            <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'tween' }}
-              className="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 md:hidden"
-            >
-              <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-                <div className="flex items-center">
-                  <GrYoga className="text-2xl text-primary mr-2" />
-                  <h1 className="text-xl font-bold text-primary">Vedic Yog Kendra</h1>
-                </div>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <IoClose className="text-2xl" />
-                </button>
-              </div>
-              <nav className="flex flex-col p-4 space-y-4">
-                {navItems.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.link}
-                    className="text-gray-700 hover:text-primary font-medium flex items-center py-2 px-3 rounded hover:bg-gray-50 transition-colors"
+            <>
+              <motion.div
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: 'tween', ease: "easeInOut" }}
+                className="fixed inset-y-0 left-0 max-w-[80%] w-[250px] bg-white shadow-lg z-50 md:hidden h-full"
+              >
+                <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                  <GrYoga className="text-2xl text-primary" />
+                  <button
                     onClick={() => setIsOpen(false)}
+                    className="text-gray-500 hover:text-gray-700"
                   >
-                    <span className="mr-3">{item.icon}</span>
-                    {item.name}
-                  </a>
-                ))}
-              </nav>
-            </motion.div>
+                    <IoClose className="text-2xl" />
+                  </button>
+                </div>
+                <nav className="flex flex-col p-4 space-y-3">
+                  {navItems.map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.link}
+                      className="text-gray-700 hover:text-primary font-medium flex items-center py-2 px-3 rounded hover:bg-gray-50 transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <span className="mr-3">{item.icon}</span>
+                      {item.name}
+                    </a>
+                  ))}
+                </nav>
+              </motion.div>
+
+              {/* Overlay */}
+              <div
+                className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+                onClick={() => setIsOpen(false)}
+              />
+            </>
           )}
         </AnimatePresence>
-
-        {/* Overlay */}
-        {isOpen && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-            onClick={() => setIsOpen(false)}
-          />
-        )}
       </div>
     </header>
   );
